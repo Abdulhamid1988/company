@@ -18,8 +18,8 @@ public class Worker {
     private String phoneNumber;
 
     @OneToOne
-    private Address address; //
+    private Address address;
 
     @ManyToOne
-    private Department department; //
+    private Department department;
 }

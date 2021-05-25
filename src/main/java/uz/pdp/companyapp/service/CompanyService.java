@@ -51,6 +51,7 @@ public class CompanyService {
     public ApiResponse deleteAddress(@PathVariable Integer id){
         Optional<Company> byId = companyRepository.findById(id);
         if (byId.isPresent()){
+            addressRepository.deleteById(byId.get().getAddress().getId());
             companyRepository.deleteById(id);
             return new ApiResponse("Deleted successfully",true);
         }
@@ -64,24 +65,19 @@ public class CompanyService {
             return new ApiResponse("bu nomdagi companiya mavjud",false);
         }
         company.setCorpName(companyDTO.getCorpName());
-
         company.setDirectorName(companyDTO.getDirectorName());
 
-        Address address = new Address();
         boolean check = addressRepository.existsByHomeNumberAndStreet(companyDTO.getStreet(), companyDTO.getHomeNumber());
         if (check){
             return new ApiResponse("bu ADRESS mavjud",false);
         }
-
+        Address address = new Address();
         address.setStreet(companyDTO.getStreet());
         address.setHomeNumber(companyDTO.getHomeNumber());
-
         addressRepository.save(address);
-
-
+        company.setAddress(address);
         companyRepository.save(company);
         return new ApiResponse("added successfully",true);
-
     }
 
     public ApiResponse editCompany(@PathVariable Integer id,@Valid @RequestBody CompanyDTO companyDTO){
@@ -101,6 +97,7 @@ public class CompanyService {
                 address.setStreet(companyDTO.getStreet());
                 address.setHomeNumber(companyDTO.getHomeNumber());
                 addressRepository.save(address);
+                company.setAddress(address);
             }else {
                 return new ApiResponse(" id not found",false);
             }

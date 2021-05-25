@@ -60,7 +60,8 @@ public class WorkerService {
         }else {
             return new ApiResponse("bu department id topilmadi",false);
         }
-
+        addressRepository.save(address);
+        worker.setAddress(address);
         workerRepository.save(worker);
         return new ApiResponse("Success",true);
     }
@@ -109,10 +110,10 @@ public class WorkerService {
         return new ApiResponse("id not fount bro",false);
     }
 
-
     public ApiResponse delete(Integer id){
         Optional<Worker> byId = workerRepository.findById(id);
         if (byId.isPresent()){
+            addressRepository.deleteById(byId.get().getAddress().getId());
             workerRepository.deleteById(id);
             return new ApiResponse("Deleted successfully",true);
         }
